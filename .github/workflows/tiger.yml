@@ -1,0 +1,35 @@
+name: 'Mod Validation'
+
+on:
+  push:
+    branches: ['main', 'development']
+  pull_request:
+    branches: ['main', 'development']
+
+jobs:
+  validate-scripts:
+    name: 'Validate with Tiger'
+    runs-on: self-hosted
+
+    steps:
+      - name: 'Checkout Mod Code'
+        uses: actions/checkout@v4
+
+      - name: 'Setup .NET SDK'
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # The build step can also use a variable if the checkout path is not predictable.
+      - name: 'Clone and Build Tiger'
+        run: |
+          git clone https://github.com/ck3-tiger/tiger.git ${{ vars.TIGER_CHECKOUT_PATH }}
+          dotnet build ${{ vars.TIGER_PROJECT_PATH }} --configuration Release
+
+      - name: 'Run Tiger Validation'
+        run: |
+          echo "Starting validation against vanilla path: ${{ vars.VANILLA_GAME_PATH }}"
+          
+          # Use the variables from GitHub Settings instead of a hardcoded env block.
+          # The ${{ vars.VARIABLE_NAME }} syntax is replaced by GitHub at runtime.
+          dotnet run --project "${{ vars.TIGER_PROJECT_PATH }}" --configuration Release -- --vanilla-path "${{ vars.VANILLA_GAME_PATH }}" --path .
