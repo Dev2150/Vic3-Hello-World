@@ -11,26 +11,26 @@ jobs:
     name: 'Validate with Tiger'
     runs-on: self-hosted
 
-    env:
-      DOTNET_ROOT: 'C:\Program Files\dotnet'
-
     steps:
       - name: 'Checkout Mod Code'
         uses: actions/checkout@v4
 
-      # Find the existing installation at DOTNET_ROOT
-      # and simply add it to the path without trying to install anything.
-      - name: 'Setup .NET SDK'
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
+      - name: 'Manually Add .NET to PATH'
+        run: echo "C:\Program Files\dotnet" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        shell: powershell
 
       - name: 'Run Tiger Validation'
-        # We'll use PowerShell for consistency, as we know it's the runner's default.
         shell: powershell
         run: |
-          echo "Starting validation against vanilla path: ${{ vars.VANILLA_GAME_PATH }}"
+          # Ensure you have set these variables in your repository's Settings > Actions > Variables
+          $tigerProjectPath = "${{ vars.TIGER_PROJECT_PATH }}"
+          $vanillaGamePath = "${{ vars.VANILLA_GAME_PATH }}"
+
+          echo "Starting validation against vanilla path: $vanillaGamePath"
           
-          # Use the variables from GitHub Settings instead of a hardcoded env block.
-          # The ${{ vars.VARIABLE_NAME }} syntax is replaced by GitHub at runtime.
-          dotnet run --project "${{ vars.TIGER_PROJECT_PATH }}" --configuration Release -- --vanilla-path "${{ vars.VANILLA_GAME_PATH }}" --path .
+          # Let's add a quick verification command here for confidence.
+          echo "--- Verifying dotnet command ---"
+          dotnet --version
+
+          echo "--- Running Tiger ---"
+          dotnet run --project $tigerProjectPath --configuration Release -- --vanilla-path "$vanillaGamePath" --path .
