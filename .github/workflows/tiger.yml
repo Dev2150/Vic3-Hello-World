@@ -14,22 +14,26 @@ jobs:
     steps:
       - name: 'Debug Runner Environment'
         run: |
-            echo "--- Who am I? ---"
-            whoami
-            
-            echo "--- What is my PATH? ---"
-            # This prints the PATH variable, which is the most critical piece of information.
-            echo $env:PATH
-            
-            echo "--- Where is dotnet.exe located according to my PATH? ---"
-            # This command searches the PATH for dotnet.exe.
-            # If this fails, the PATH is definitely wrong.
-            where.exe dotnet
-            
-            echo "--- What does dotnet --info say? ---"
-            # This is the final test. We run the same command that works for you locally.
-            dotnet --info
-          shell: pwsh # Use PowerShell for consistent commands on Windows
+          echo "--- Who am I? ---"
+          whoami
+          
+          echo "--- What is my PATH? ---"
+          # This prints the PATH variable, which is the most critical piece of information.
+          echo $env:PATH
+          
+          echo "--- Where is dotnet.exe located according to my PATH? ---"
+          # This command searches the PATH for dotnet.exe.
+          # If this fails, the PATH is definitely wrong.
+          where.exe dotnet
+          
+          echo "--- What does dotnet --info say? ---"
+          # This is the final test. We run the same command that works for you locally.
+          dotnet --info
+        shell: pwsh # Use PowerShell for consistent commands on Windows
+
+      # --- The rest of your workflow (it will likely fail here, which is OK for now) ---
+      - name: 'Checkout Mod Code'
+        uses: actions/checkout@v4
 
       - name: 'Setup .NET SDK'
         uses: actions/setup-dotnet@v4
