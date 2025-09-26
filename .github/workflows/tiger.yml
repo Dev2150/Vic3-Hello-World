@@ -22,15 +22,29 @@ jobs:
       - name: 'Run Tiger Validation'
         shell: powershell
         run: |
-          # Ensure you have set these variables in your repository's Settings > Actions > Variables
+          # --- Step 1: Get Variables ---
           $tigerProjectPath = "${{ vars.TIGER_PROJECT_PATH }}"
           $vanillaGamePath = "${{ vars.VANILLA_GAME_PATH }}"
 
-          echo "Starting validation against vanilla path: $vanillaGamePath"
-          
-          # Let's add a quick verification command here for confidence.
+          # --- Step 2: Verify Variables (Good Debugging Practice) ---
+          echo "Tiger Project Path: $tigerProjectPath"
+          echo "Vanilla Game Path: $vanillaGamePath"
+
+          # Check if the paths actually exist on the runner.
+          if (-not (Test-Path $tigerProjectPath)) {
+            echo "ERROR: Tiger project path not found at '$tigerProjectPath'"
+            exit 1
+          }
+          if (-not (Test-Path $vanillaGamePath)) {
+            echo "ERROR: Vanilla game path not found at '$vanillaGamePath'"
+            exit 1
+          }
+
+          # --- Step 3: Build the Command and Run ---
           echo "--- Verifying dotnet command ---"
           dotnet --version
 
           echo "--- Running Tiger ---"
-          dotnet run --project $tigerProjectPath --configuration Release -- --vanilla-path "$vanillaGamePath" --path .
+          # This is the corrected command.
+          # We ensure that 'Release' is correctly passed as the value for '--configuration'.
+          dotnet run --project $tigerProjectPath --configuration "Release" -- --vanilla-path "$vanillaGamePath" --path "."
