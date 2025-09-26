@@ -12,16 +12,35 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: 'Checkout Mod Code'
-        uses: actions/checkout@v4
-
-      - name: 'Debug: Show dotnet info before setup'
-        run: dotnet --info
+      - name: 'Debug Runner Environment'
+        run: |
+            echo "--- Who am I? ---"
+            whoami
+            
+            echo "--- What is my PATH? ---"
+            # This prints the PATH variable, which is the most critical piece of information.
+            echo $env:PATH
+            
+            echo "--- Where is dotnet.exe located according to my PATH? ---"
+            # This command searches the PATH for dotnet.exe.
+            # If this fails, the PATH is definitely wrong.
+            where.exe dotnet
+            
+            echo "--- What does dotnet --info say? ---"
+            # This is the final test. We run the same command that works for you locally.
+            dotnet --info
+          shell: pwsh # Use PowerShell for consistent commands on Windows
 
       - name: 'Setup .NET SDK'
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
+
+      - name: 'Checkout Mod Code'
+        uses: actions/checkout@v4
+
+      - name: 'Debug: Show dotnet info before setup'
+        run: dotnet --info
 
       # The build step can also use a variable if the checkout path is not predictable.
       - name: 'Clone and Build Tiger'
