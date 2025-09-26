@@ -13,13 +13,19 @@ jobs:
 
     steps:
       - name: 'Debug Runner Environment'
+        shell: pwsh # Explicitly request modern PowerShell if available, will fall back gracefully.
         run: |
           echo "--- Who am I? ---"
           whoami
+          
           echo "--- What is my PATH? ---"
-          @echo %PATH%
+          # This is the correct PowerShell syntax to print the PATH variable.
+          echo $env:PATH
+          
           echo "--- Where is dotnet.exe located according to my PATH? ---"
-          where dotnet
+          # 'Get-Command' is the PowerShell equivalent of 'where'.
+          Get-Command dotnet
+          
           echo "--- What does dotnet --info say? ---"
           dotnet --info
       - name: 'Checkout Mod Code'
