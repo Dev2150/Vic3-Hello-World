@@ -13,25 +13,24 @@ jobs:
 
     steps:
       - name: 'Debug Runner Environment'
-        shell: pwsh # Explicitly request modern PowerShell if available, will fall back gracefully.
+        shell: powershell # Explicitly use the built-in Windows PowerShell
         run: |
           echo "--- Who am I? ---"
           whoami
           
           echo "--- What is my PATH? ---"
-          # This is the correct PowerShell syntax to print the PATH variable.
           echo $env:PATH
           
           echo "--- Where is dotnet.exe located according to my PATH? ---"
-          # 'Get-Command' is the PowerShell equivalent of 'where'.
-          Get-Command dotnet
+          Get-Command dotnet -ErrorAction SilentlyContinue
           
           echo "--- What does dotnet --info say? ---"
-          dotnet --info
+          dotnet --info -ErrorAction SilentlyContinue
+
       - name: 'Checkout Mod Code'
         uses: actions/checkout@v4
 
-      - name: 'Setup .NET SDK'
+      - name: 'Setup .-NET SDK'
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
