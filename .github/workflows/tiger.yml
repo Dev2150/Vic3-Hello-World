@@ -12,21 +12,6 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: 'Debug Runner Environment'
-        shell: powershell # Explicitly use the built-in Windows PowerShell
-        run: |
-          echo "--- Who am I? ---"
-          whoami
-          
-          echo "--- What is my PATH? ---"
-          echo $env:PATH
-          
-          echo "--- Where is dotnet.exe located according to my PATH? ---"
-          Get-Command dotnet -ErrorAction SilentlyContinue
-          
-          echo "--- What does dotnet --info say? ---"
-          dotnet --info -ErrorAction SilentlyContinue
-
       - name: 'Checkout Mod Code'
         uses: actions/checkout@v4
 
@@ -35,19 +20,9 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: 'Checkout Mod Code'
-        uses: actions/checkout@v4
-
-      - name: 'Debug: Show dotnet info before setup'
-        run: dotnet --info
-
-      # The build step can also use a variable if the checkout path is not predictable.
-      - name: 'Clone and Build Tiger'
-        run: |
-          git clone https://github.com/ck3-tiger/tiger.git ${{ vars.TIGER_CHECKOUT_PATH }}
-          dotnet build ${{ vars.TIGER_PROJECT_PATH }} --configuration Release
-
       - name: 'Run Tiger Validation'
+        # We'll use PowerShell for consistency, as we know it's the runner's default.
+        shell: powershell
         run: |
           echo "Starting validation against vanilla path: ${{ vars.VANILLA_GAME_PATH }}"
           
