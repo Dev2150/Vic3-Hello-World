@@ -11,11 +11,16 @@ jobs:
     name: 'Validate with Tiger'
     runs-on: self-hosted
 
+    env:
+      DOTNET_ROOT: 'C:\Program Files\dotnet'
+
     steps:
       - name: 'Checkout Mod Code'
         uses: actions/checkout@v4
 
-      - name: 'Setup .-NET SDK'
+      # Find the existing installation at DOTNET_ROOT
+      # and simply add it to the path without trying to install anything.
+      - name: 'Setup .NET SDK'
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
