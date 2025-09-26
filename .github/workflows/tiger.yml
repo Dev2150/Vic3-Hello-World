@@ -12,6 +12,16 @@ jobs:
     runs-on: self-hosted
 
     steps:
+      - name: 'Debug Runner Environment'
+        run: |
+          echo "--- Who am I? ---"
+          whoami
+          echo "--- What is my PATH? ---"
+          @echo %PATH%
+          echo "--- Where is dotnet.exe located according to my PATH? ---"
+          where dotnet
+          echo "--- What does dotnet --info say? ---"
+          dotnet --info
       - name: 'Checkout Mod Code'
         uses: actions/checkout@v4
 
