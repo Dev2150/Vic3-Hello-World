@@ -48,4 +48,23 @@ jobs:
           # We execute the .exe directly.
           # The '&' is the PowerShell "call operator", used to run commands with paths/arguments in variables.
           # We pass the arguments it expects, which are likely similar to the source code version.
-          & $tigerExecutable $modPath --game "$vanillaGamePath"
+          $tigerOutput = & $tigerExecutable --vanilla-path "$vanillaGamePath" --path "." | Tee-Object -Variable tigerOutputString
+
+          # This uses a regular expression to find the "error: [number]" part of the summary.
+          $match = $tigerOutputString | Select-String -Pattern "error: (\d+)"
+
+          if ($match) {
+            # We found the line. Now get the number of errors.
+            $errorCount = [int]$match.Matches[0].Groups[1].Value
+          
+            echo "Tiger found $errorCount errors."
+
+            # 3. If the number of errors is greater than 0, fail the workflow.
+            if ($errorCount -gt 0) {
+              echo "::error::Failing workflow because Tiger reported $errorCount errors."
+              exit 1
+            }
+          }
+
+          # 4. If we get here, it means either no "error:" line was found, or the count was 0.
+          echo "Tiger validation passed with no errors."
