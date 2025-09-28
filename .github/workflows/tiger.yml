@@ -21,10 +21,12 @@ jobs:
           # --- Step 1: Get Variables ---
           $tigerExecutable = "${{ vars.TIGER_EXECUTABLE_PATH }}"
           $vanillaGamePath = "${{ vars.VANILLA_GAME_PATH }}"
+          $modPath = "${{ vars.MOD_PATH }}"
           
           # --- Step 2: Verify Variables ---
           echo "Tiger Executable Path: $tigerExecutable"
           echo "Vanilla Game Path: $vanillaGamePath"
+          echo "Mod Path: $modPath"
           
           if (-not (Test-Path $tigerExecutable)) {
             echo "ERROR: Tiger executable not found at '$tigerExecutable'"
@@ -35,10 +37,15 @@ jobs:
             exit 1
           }
           
+          if (-not (Test-Path $modPath)) {
+            echo "ERROR: Mod path not found at '$modPath'"
+            exit 1
+          }
+          
           # --- Step 3: Run the Executable ---
           echo "--- Running Tiger ---"
           
           # We execute the .exe directly.
           # The '&' is the PowerShell "call operator", used to run commands with paths/arguments in variables.
           # We pass the arguments it expects, which are likely similar to the source code version.
-          & $tigerExecutable --vanilla-path "$vanillaGamePath" --path "."
+          & $tigerExecutable $modPath --game "$vanillaGamePath"
