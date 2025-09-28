@@ -48,7 +48,7 @@ jobs:
           # We execute the .exe directly.
           # The '&' is the PowerShell "call operator", used to run commands with paths/arguments in variables.
           # We pass the arguments it expects, which are likely similar to the source code version.
-          $tigerOutput = & $tigerExecutable --vanilla-path "$vanillaGamePath" --path "." | Tee-Object -Variable tigerOutputString
+          $tigerOutput = & $tigerExecutable $modPath --game "$vanillaGamePath" | Tee-Object -Variable tigerOutputString
 
           # This uses a regular expression to find the "error: [number]" part of the summary.
           $match = $tigerOutputString | Select-String -Pattern "error: (\d+)"
